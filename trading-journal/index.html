@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ManiacDT — Trading Journal</title>
+<meta name="description" content="Trading journal: realtime trades, backtest sessions, statistics">
+<meta name="theme-color" content="#F4F5F7">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='6' y='10' width='6' height='14' rx='1.5' fill='%230AA477'/%3E%3Crect x='8.5' y='5' width='1' height='24' fill='%230AA477'/%3E%3Crect x='20' y='7' width='6' height='11' rx='1.5' fill='%23E5484D'/%3E%3Crect x='22.5' y='3' width='1' height='22' fill='%23E5484D'/%3E%3C/svg%3E">
+<script>
+/* тема до первой отрисовки — без мигания */
+(function(){
+  var th = localStorage.getItem("mdt.theme")
+    || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  document.documentElement.dataset.theme = th;
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="#" id="brandLink">
+      <svg class="brand-spark" viewBox="0 0 64 24" aria-hidden="true">
+        <polyline points="1,18 9,14 16,16 24,9 31,12 39,6 47,10 55,4 63,7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="brand-name">MANIACDT</span>
+      <span class="brand-sub">trading journal</span>
+    </a>
+
+    <nav class="tabs" aria-label="Sections">
+      <button class="tab is-active" data-page="journal">Realtime Journal</button>
+      <button class="tab" data-page="backtest">Backtest</button>
+      <button class="tab" data-page="stats">Statistics</button>
+    </nav>
+
+    <div class="head-tools">
+      <button class="icon-btn head-btn" id="langBtn" title="Language / Язык">EN</button>
+      <button class="icon-btn head-btn" id="themeBtn" title="Theme"></button>
+
+      <details class="menu" id="dataMenu">
+        <summary class="btn btn-ghost" data-i18n="data">Данные <svg viewBox="0 0 12 12" class="caret"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary>
+        <div class="menu-list">
+          <button id="btnExport" data-i18n="export_json">Экспорт JSON</button>
+          <button id="btnExcel" data-i18n="export_excel">Бекап в Excel</button>
+          <button id="btnImport" data-i18n="import_json">Импорт JSON</button>
+          <button id="btnDemo" data-i18n="demo">Демо-данные</button>
+          <hr>
+          <button id="btnWipe" class="danger" data-i18n="wipe">Очистить всё</button>
+        </div>
+      </details>
+
+      <div id="authArea"></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ======================= REALTIME JOURNAL ======================= -->
+  <section class="page is-active" id="page-journal">
+    <div class="page-head">
+      <div class="eyebrow"><span class="dot dot-live"></span>Realtime journal</div>
+      <div class="crumbs" id="jCrumbs"></div>
+    </div>
+
+    <div class="weeks" id="jWeeks"></div>
+    <div class="week-summary" id="jSummary"></div>
+
+    <div class="card table-card">
+      <div class="card-top">
+        <h2 id="jTitle"></h2>
+        <div class="actions">
+          <button class="btn btn-ghost" id="jBtnLists" data-i18n="lists_models">Списки и модели</button>
+          <button class="btn btn-ghost" id="jBtnCols" data-i18n="columns">Столбцы</button>
+          <button class="btn btn-primary" id="jBtnAdd" data-i18n="add_trade">+ Сделка</button>
+        </div>
+      </div>
+      <div class="table-wrap" id="jTable"></div>
+    </div>
+  </section>
+
+  <!-- ======================= BACKTEST ======================= -->
+  <section class="page" id="page-backtest">
+    <div class="page-head">
+      <div class="eyebrow"><span class="dot dot-bt"></span>Backtest</div>
+    </div>
+    <div id="btRoot"></div>
+  </section>
+
+  <!-- ======================= STATISTICS ======================= -->
+  <section class="page" id="page-stats">
+    <div class="page-head">
+      <div class="eyebrow"><span class="dot dot-st"></span>Statistics</div>
+      <div class="segmented" id="stScope">
+        <button class="seg is-active" data-scope="realtime">Realtime</button>
+        <button class="seg" data-scope="backtest">Backtest</button>
+      </div>
+    </div>
+
+    <div class="st-controls card" id="stControls"></div>
+    <div class="metrics" id="stMetrics"></div>
+
+    <div class="card chart-card">
+      <div class="card-top">
+        <h2 data-i18n="equity">Кривая доходности</h2>
+        <span class="hint" id="stChartHint"></span>
+      </div>
+      <div class="chart-wrap" id="stChart"></div>
+    </div>
+
+    <div class="breakdowns" id="stBreakdowns"></div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="foot-links">
+    <a href="https://t.me/crypto_maniacdt" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M21.5 4.6 2.9 11.8c-1 .4-.9 1.8.1 2.1l4.6 1.4 1.8 5.4c.3.9 1.4 1.1 2 .4l2.6-2.7 4.7 3.5c.8.6 1.9.2 2.1-.8l2.6-14.6c.2-1.1-.9-2-1.9-1.9zM9.4 14.9l8.9-7.6c.3-.2.6.2.4.4l-7.4 7.9-.3 3.1-1.6-3.8z" fill="currentColor"/></svg>
+      <span data-i18n="foot_tg">Ежедневная аналитика в Telegram</span>
+    </a>
+    <a href="https://t.me/altcoin_scannerbot" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M12 2a1 1 0 0 1 1 1v1.1A7 7 0 0 1 19 11v5l1.6 2.4a1 1 0 0 1-.8 1.6H4.2a1 1 0 0 1-.8-1.6L5 16v-5a7 7 0 0 1 6-6.9V3a1 1 0 0 1 1-1zm-3 8.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6zm6 0a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z" fill="currentColor"/></svg>
+      <span data-i18n="foot_bot">Бот для торговли альткоинами</span>
+    </a>
+    <a href="https://bingx.com/partner/maniacdt/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M7.5 4a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm9 9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zM18.4 4.2a1 1 0 0 1 1.4 1.4l-14 14a1 1 0 0 1-1.4-1.4l14-14zM7.5 6a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm9 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" fill="currentColor"/></svg>
+      <span data-i18n="foot_bingx">−25% на комиссии BingX</span>
+    </a>
+  </div>
+  <div class="foot-note" id="footNote">© 2026 ManiacDT</div>
+</footer>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+<input type="file" id="importFile" accept="application/json" hidden>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/core.js"></script>
+<script src="js/cloud.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/journal.js"></script>
+<script src="js/backtest.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+/* ============================================================
+   i18n.js — локализация (русский / английский)
+   ============================================================ */
+"use strict";
+
+let LANG = localStorage.getItem("mdt.lang")
+  || ((navigator.language || "en").toLowerCase().startsWith("ru") ? "ru" : "en");
+
+const I18N = {
+ru: {
+  months: ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"],
+  monthsGen: ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],
+  daysShort: ["вс","пн","вт","ср","чт","пт","сб"],
+  daysFull: ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"],
+  dowRow: ["пн","вт","ср","чт","пт","сб","вс"],
+
+  data:"Данные", export_json:"Экспорт JSON", import_json:"Импорт JSON",
+  export_excel:"Бекап в Excel", demo:"Демо-данные", wipe:"Очистить всё",
+  today:"Сегодня", weeks:"Недели", calendar:"Календарь",
+  week:"Неделя", trades_of_week:"Сделки недели",
+  no_trades_week:"Нет сделок на этой неделе", no_trades_day:"Нет сделок в этот день",
+  trades_c:"Сделок", result:"Результат", winrate:"Winrate",
+  lists_models:"Списки и модели", columns:"Столбцы", add_trade:"+ Сделка",
+
+  col_asset:"Актив", col_market:"Рынок", col_posType:"Тип позиции", col_model:"Модель входа",
+  col_timeframe:"Таймфрейм", col_time:"Время", col_direction:"Направление", col_size:"Размер позиции",
+  col_entry:"Вход", col_exit:"Выход", col_stop:"Стоп", col_take:"Тейк",
+  col_result:"Результат, %", col_note:"Заметка", col_entryTime:"Время входа", date:"Дата",
+
+  new_trade:"Новая сделка", edit_trade:"Редактировать сделку", save:"Сохранить",
+  add:"Добавить", cancel:"Отмена", done:"Готово", del:"Удалить", edit:"Редактировать", close:"Закрыть",
+  yesterday:"Вчера", photos:"Фото", photo_add:"фото", need_date:"Укажите дату сделки",
+  trade_added:"Сделка добавлена", trade_updated:"Сделка обновлена", trade_deleted:"Сделка удалена",
+  del_trade_q:"Удалить сделку?", trade_photos:"Фото сделки", photo_fail:"Не удалось загрузить фото",
+  rr:"Риск / прибыль", rr_hint:"по полям вход · стоп · тейк", no_value:"—",
+
+  cols_title:"Столбцы журнала", own_cols:"Свои столбцы", no_own_cols:"Пока нет своих столбцов.",
+  col_name:"Название столбца", type_text:"Текст", type_number:"Число",
+  t_text:"текст", t_number:"число", t_select:"выбор", t_time:"время", t_datetime:"дата/время",
+  t_result:"число %", t_own:"свой",
+  del_col_q:"Удалить столбец? Данные в нём останутся в записях, но перестанут отображаться.",
+  need_col_name:"Введите название столбца",
+
+  tab_market:"Рынок", tab_posType:"Тип позиции", tab_direction:"Направление",
+  tab_timeframe:"Таймфреймы", tab_models:"Модели входа",
+  list_empty:"Список пуст.", new_value:"Новое значение", value_exists:"Такое значение уже есть",
+  lists_note:"Списки Realtime и Backtest независимы: изменения здесь не затрагивают второй раздел.",
+  lists_title:"Списки и модели",
+  add_model:"+ Добавить модель", described:"описана",
+  del_model_q:"Удалить модель? В существующих сделках её название сохранится как текст.",
+  new_model:"Новая модель", edit_model:"Редактировать модель", model_name:"Название модели",
+  model_name_ph:"Например: classic reversal 1h5m", describe_model:"Описать модель",
+  model_desc:"Описание модели", model_desc_ph:"Логика входа, контекст, условия сетапа…",
+  risk_mgmt:"Риск-менеджмент", risk_ph:"Риск на сделку, правила стопа, частичные фиксации…",
+  model_tfs:"Таймфреймы", model_tfs_ph:"Например: контекст 4h, вход 15m",
+  examples_photos:"Примеры (фото)", need_model_name:"Введите название модели", model_saved:"Модель сохранена",
+  model_not_found:"Модель не найдена в списке",
+  no_model_desc:"У этой модели нет описания. Добавьте его через «Списки и модели».",
+  describe:"Описать", description:"Описание", examples:"Примеры",
+
+  sessions:"Сессии", new_session:"Новая сессия", new_bt_session:"Новая бектест-сессия",
+  session_created:"Сессия создана", del_session_q:"Удалить сессию вместе со всеми сделками?",
+  session_deleted:"Сессия удалена", no_sessions:"нет сделок",
+  bt_hint:"Бектест-сессия — это отдельный журнал по одному активу за выбранный период. Создайте первую, чтобы начать.",
+  asset:"Актив", asset_ph:"Например: BTCUSDT, XAUUSD, NQ", next:"Далее →", back:"← Назад",
+  skip:"Пропустить", create_session:"Создать сессию", period_from:"Начало периода", period_to:"Конец периода",
+  period_of:"Период бектеста", period_not_set:"период не задан",
+  period_hint:"Период — это отрезок истории, который вы прогоняете на графике. Его можно не указывать.",
+  summary:"Сводка", trades_short:"сд.", add_bt:"Добавьте сделки бектеста",
+  no_result_trades:"В сессии пока нет сделок с заполненным результатом.",
+  by_models:"По моделям", avg_win:"Сред. прибыль", avg_loss:"Сред. убыток", trade_of:"Сделка",
+
+  from:"С", to:"По", all_time:"Всё время", month:"Месяц", d30:"30 дней", d90:"90 дней", year:"Год",
+  session:"Сессия", all_sessions:"Все сессии",
+  sessions_hint:"сессий · сделки упорядочены по времени входа",
+  equity:"Кривая доходности", cum_hint:"накопленный результат, %", trades_n:"сделок",
+  by_models_full:"По моделям входа", by_tfs:"По таймфреймам", name:"Название",
+  sum_result:"Σ результат", no_data_period:"Нет данных за выбранный период.",
+  not_enough:"Недостаточно данных",
+  need_two:"Нужно минимум две сделки с заполненным результатом, чтобы построить кривую.",
+  max_dd:"Макс. просадка", sharpe:"Коэф. Шарпа", per_trade:"по сделкам",
+  profit_factor:"Profit factor", best_worst:"Лучшая / худшая", avg_pm:"сред.",
+  metric_trades:"Лучшая / худшая",
+
+  no_trades_yet:"Пока нет сделок",
+  add_first:"Добавьте первую запись — кнопка «+ Сделка» справа сверху.",
+
+  storage_full:"Хранилище переполнено. Удалите фото или сделайте экспорт.",
+  export_ready:"Экспорт готов", excel_ready:"Excel-файл готов",
+  imported:"Данные импортированы", bad_file:"Файл не похож на экспорт журнала",
+  wipe_q:"Удалить все сделки, сессии и настройки? Действие необратимо.",
+  wiped:"Журнал очищен", demo_q:"Добавить демо-данные (сделки за 3 месяца и одна бектест-сессия)?",
+  demo_added:"Демо-данные добавлены", xlsx_missing:"Библиотека Excel не загрузилась. Проверьте интернет.",
+
+  login:"Войти", logout:"Выйти", account:"Аккаунт", email:"Email", password:"Пароль",
+  password2:"Повторите пароль", sign_in:"Вход", sign_up:"Регистрация",
+  create_account:"Создать аккаунт", forgot:"Забыли пароль?",
+  send_reset:"Отправить ссылку", reset_sent:"Ссылка для сброса отправлена на почту",
+  reset_title:"Восстановление пароля",
+  reset_hint:"Укажите email аккаунта — мы отправим ссылку для сброса пароля.",
+  new_password:"Новый пароль", set_password:"Сохранить пароль", password_updated:"Пароль обновлён",
+  pass_mismatch:"Пароли не совпадают", pass_short:"Пароль минимум 8 символов",
+  check_email:"Проверьте почту: мы отправили письмо для подтверждения регистрации.",
+  logged_in:"Вы вошли в аккаунт", logged_out:"Вы вышли из аккаунта",
+  auth_email_note:"Логином служит email — на него же приходит восстановление пароля.",
+  cloud_off_title:"Облако не настроено",
+  cloud_off_text:"Сайт работает в локальном режиме: данные хранятся только в этом браузере. Чтобы включить аккаунты и облачную синхронизацию, настройте Supabase — инструкция в файле README.md рядом с сайтом.",
+  sync_ok:"Синхронизировано", sync_saving:"Сохранение…", sync_err:"Ошибка синхронизации — данные сохранены локально",
+  sync_local:"Локальный режим", migrate_q:"В облаке пусто, а в этом браузере есть записи. Перенести их в аккаунт?",
+  cloud_loaded:"Данные загружены из облака",
+
+  guest:"Гость",
+  theme:"Тема", language:"Язык",
+  foot_tg:"Ежедневная аналитика в Telegram", foot_bot:"Бот для торговли альткоинами",
+  foot_bingx:"−25% на комиссии BingX",
+  foot_note_local:"Данные журнала хранятся локально в вашем браузере",
+  foot_note_cloud:"Данные синхронизируются с вашим аккаунтом",
+  err_generic:"Что-то пошло не так. Попробуйте ещё раз."
+},
+en: {
+  months: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+  monthsGen: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+  daysShort: ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+  daysFull: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+  dowRow: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+
+  data:"Data", export_json:"Export JSON", import_json:"Import JSON",
+  export_excel:"Excel backup", demo:"Demo data", wipe:"Clear everything",
+  today:"Today", weeks:"Weeks", calendar:"Calendar",
+  week:"Week", trades_of_week:"Trades of the week",
+  no_trades_week:"No trades this week", no_trades_day:"No trades on this day",
+  trades_c:"Trades", result:"Result", winrate:"Winrate",
+  lists_models:"Lists & models", columns:"Columns", add_trade:"+ Trade",
+
+  col_asset:"Asset", col_market:"Market", col_posType:"Position type", col_model:"Entry model",
+  col_timeframe:"Timeframe", col_time:"Time", col_direction:"Direction", col_size:"Position size",
+  col_entry:"Entry", col_exit:"Exit", col_stop:"Stop", col_take:"Take",
+  col_result:"Result, %", col_note:"Note", col_entryTime:"Entry time", date:"Date",
+
+  new_trade:"New trade", edit_trade:"Edit trade", save:"Save",
+  add:"Add", cancel:"Cancel", done:"Done", del:"Delete", edit:"Edit", close:"Close",
+  yesterday:"Yesterday", photos:"Photos", photo_add:"photo", need_date:"Set the trade date",
+  trade_added:"Trade added", trade_updated:"Trade updated", trade_deleted:"Trade deleted",
+  del_trade_q:"Delete this trade?", trade_photos:"Trade photos", photo_fail:"Could not load the photo",
+  rr:"Risk / reward", rr_hint:"from entry · stop · take", no_value:"—",
+
+  cols_title:"Journal columns", own_cols:"Custom columns", no_own_cols:"No custom columns yet.",
+  col_name:"Column name", type_text:"Text", type_number:"Number",
+  t_text:"text", t_number:"number", t_select:"select", t_time:"time", t_datetime:"date/time",
+  t_result:"number %", t_own:"custom",
+  del_col_q:"Delete this column? Its data stays in records but will no longer be shown.",
+  need_col_name:"Enter a column name",
+
+  tab_market:"Market", tab_posType:"Position type", tab_direction:"Direction",
+  tab_timeframe:"Timeframes", tab_models:"Entry models",
+  list_empty:"The list is empty.", new_value:"New value", value_exists:"This value already exists",
+  lists_note:"Realtime and Backtest lists are independent: changes here don't affect the other section.",
+  lists_title:"Lists & models",
+  add_model:"+ Add model", described:"described",
+  del_model_q:"Delete this model? Existing trades keep its name as text.",
+  new_model:"New model", edit_model:"Edit model", model_name:"Model name",
+  model_name_ph:"e.g. classic reversal 1h5m", describe_model:"Describe the model",
+  model_desc:"Model description", model_desc_ph:"Entry logic, context, setup conditions…",
+  risk_mgmt:"Risk management", risk_ph:"Risk per trade, stop rules, partial exits…",
+  model_tfs:"Timeframes", model_tfs_ph:"e.g. context 4h, entry 15m",
+  examples_photos:"Examples (photos)", need_model_name:"Enter a model name", model_saved:"Model saved",
+  model_not_found:"Model not found in the list",
+  no_model_desc:"This model has no description yet. Add one via “Lists & models”.",
+  describe:"Describe", description:"Description", examples:"Examples",
+
+  sessions:"Sessions", new_session:"New session", new_bt_session:"New backtest session",
+  session_created:"Session created", del_session_q:"Delete this session with all its trades?",
+  session_deleted:"Session deleted", no_sessions:"no trades",
+  bt_hint:"A backtest session is a separate journal for one asset over a chosen period. Create the first one to start.",
+  asset:"Asset", asset_ph:"e.g. BTCUSDT, XAUUSD, NQ", next:"Next →", back:"← Back",
+  skip:"Skip", create_session:"Create session", period_from:"Period start", period_to:"Period end",
+  period_of:"Backtest period", period_not_set:"period not set",
+  period_hint:"The period is the slice of history you replay on the chart. You can leave it empty.",
+  summary:"Summary", trades_short:"tr.", add_bt:"Add backtest trades",
+  no_result_trades:"This session has no trades with a filled result yet.",
+  by_models:"By models", avg_win:"Avg. win", avg_loss:"Avg. loss", trade_of:"Trade",
+
+  from:"From", to:"To", all_time:"All time", month:"Month", d30:"30 days", d90:"90 days", year:"Year",
+  session:"Session", all_sessions:"All sessions",
+  sessions_hint:"sessions · trades ordered by entry time",
+  equity:"Equity curve", cum_hint:"cumulative result, %", trades_n:"trades",
+  by_models_full:"By entry models", by_tfs:"By timeframes", name:"Name",
+  sum_result:"Σ result", no_data_period:"No data for the selected period.",
+  not_enough:"Not enough data",
+  need_two:"At least two trades with a filled result are needed to draw the curve.",
+  max_dd:"Max drawdown", sharpe:"Sharpe ratio", per_trade:"per trade",
+  profit_factor:"Profit factor", best_worst:"Best / worst", avg_pm:"avg.",
+  metric_trades:"Best / worst",
+
+  no_trades_yet:"No trades yet",
+  add_first:"Add the first record — the “+ Trade” button at the top right.",
+
+  storage_full:"Storage is full. Remove some photos or export your data.",
+  export_ready:"Export ready", excel_ready:"Excel file ready",
+  imported:"Data imported", bad_file:"This file doesn't look like a journal export",
+  wipe_q:"Delete all trades, sessions and settings? This cannot be undone.",
+  wiped:"Journal cleared", demo_q:"Add demo data (3 months of trades and one backtest session)?",
+  demo_added:"Demo data added", xlsx_missing:"Excel library failed to load. Check your connection.",
+
+  login:"Sign in", logout:"Sign out", account:"Account", email:"Email", password:"Password",
+  password2:"Repeat password", sign_in:"Sign in", sign_up:"Sign up",
+  create_account:"Create account", forgot:"Forgot password?",
+  send_reset:"Send reset link", reset_sent:"Reset link sent to your email",
+  reset_title:"Password recovery",
+  reset_hint:"Enter your account email — we'll send a password reset link.",
+  new_password:"New password", set_password:"Save password", password_updated:"Password updated",
+  pass_mismatch:"Passwords don't match", pass_short:"Password must be at least 8 characters",
+  check_email:"Check your inbox: we sent a confirmation email.",
+  logged_in:"Signed in", logged_out:"Signed out",
+  auth_email_note:"Your email is your login — password recovery goes there too.",
+  cloud_off_title:"Cloud is not configured",
+  cloud_off_text:"The site is running in local mode: data is stored only in this browser. To enable accounts and cloud sync, set up Supabase — see README.md next to the site files.",
+  sync_ok:"Synced", sync_saving:"Saving…", sync_err:"Sync error — data saved locally",
+  sync_local:"Local mode", migrate_q:"The cloud is empty but this browser has records. Move them to your account?",
+  cloud_loaded:"Data loaded from the cloud",
+
+  guest:"Guest",
+  theme:"Theme", language:"Language",
+  foot_tg:"Daily analytics on Telegram", foot_bot:"Altcoin trading bot",
+  foot_bingx:"−25% BingX fee discount",
+  foot_note_local:"Journal data is stored locally in your browser",
+  foot_note_cloud:"Data is synced with your account",
+  err_generic:"Something went wrong. Please try again."
+}
+};
+
+function t(key){
+  const d = I18N[LANG] || I18N.ru;
+  return d[key] !== undefined ? d[key] : (I18N.ru[key] !== undefined ? I18N.ru[key] : key);
+}
+
+function setLang(l){
+  LANG = l;
+  localStorage.setItem("mdt.lang", l);
+  document.documentElement.lang = l;
+  applyStaticI18n();
+  if(typeof rerenderAll === "function") rerenderAll();
+  if(typeof renderHeaderControls === "function") renderHeaderControls();
+}
+
+function applyStaticI18n(){
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+}
