@@ -20,7 +20,7 @@ ru: {
   week:"Неделя", trades_of_week:"Сделки недели",
   no_trades_week:"Нет сделок на этой неделе", no_trades_day:"Нет сделок в этот день",
   trades_c:"Сделок", result:"Результат", winrate:"Winrate",
-  lists_models:"Списки и модели", columns:"Столбцы", add_trade:"+ Сделка",
+  lists_models:"Кастомизация", columns:"Столбцы", add_trade:"+ Сделка",
 
   col_asset:"Актив", col_market:"Рынок", col_posType:"Тип позиции", col_model:"Модель входа",
   col_timeframe:"Таймфрейм", col_time:"Время", col_direction:"Направление", col_size:"Размер позиции",
@@ -45,7 +45,7 @@ ru: {
   tab_timeframe:"Таймфреймы", tab_models:"Модели входа",
   list_empty:"Список пуст.", new_value:"Новое значение", value_exists:"Такое значение уже есть",
   lists_note:"Списки Realtime и Backtest независимы: изменения здесь не затрагивают второй раздел.",
-  lists_title:"Списки и модели",
+  lists_title:"Кастомизация",
   add_model:"+ Добавить модель", described:"описана",
   del_model_q:"Удалить модель? В существующих сделках её название сохранится как текст.",
   new_model:"Новая модель", edit_model:"Редактировать модель", model_name:"Название модели",
@@ -55,7 +55,7 @@ ru: {
   model_tfs:"Таймфреймы", model_tfs_ph:"Например: контекст 4h, вход 15m",
   examples_photos:"Примеры (фото)", need_model_name:"Введите название модели", model_saved:"Модель сохранена",
   model_not_found:"Модель не найдена в списке",
-  no_model_desc:"У этой модели нет описания. Добавьте его через «Списки и модели».",
+  no_model_desc:"У этой модели нет описания. Добавьте его через «Кастомизацию».",
   describe:"Описать", description:"Описание", examples:"Примеры",
 
   sessions:"Сессии", new_session:"Новая сессия", new_bt_session:"Новая бектест-сессия",
@@ -115,6 +115,21 @@ ru: {
   foot_bingx:"−25% на комиссии BingX",
   foot_note_local:"Данные журнала хранятся локально в вашем браузере",
   foot_note_cloud:"Данные синхронизируются с вашим аккаунтом",
+  guide:"Гайд по сайту",
+  tour_skip:"Пропустить", tour_next:"Далее", tour_back:"Назад", tour_done:"Понятно!",
+  tour1_t:"Три раздела",
+  tour1_b:"Realtime Journal — сделки по неделям и дням. Backtest — сессии тестирования моделей на истории. Statistics — метрики и кривая доходности.",
+  tour2_t:"Навигация по журналу",
+  tour2_b:"Выбирайте год и месяц, переключайтесь между видами «Недели» и «Календарь». В календаре каждый день окрашен по результату, клик открывает его сделки.",
+  tour3_t:"Запись сделки",
+  tour3_b:"Интерактивная форма: параметры выбираются чипами в один клик, LONG/SHORT — крупными кнопками, риск/прибыль считается автоматически, к сделке можно прикрепить фото графика.",
+  tour4_t:"Кастомизация",
+  tour4_b:"Свои рынки, таймфреймы и модели входа — с описанием, риск-менеджментом и фото-примерами. Рядом «Столбцы»: показывайте только нужные поля.",
+  tour5_t:"Бекапы",
+  tour5_b:"Меню «Данные»: выгрузка в Excel, полный экспорт и импорт JSON. Демо-данные помогут осмотреться — их легко удалить.",
+  tour6_t:"Аккаунт и облако",
+  tour6_b:"Войдите по email и паролю — журнал будет синхронизироваться с облаком и открываться с любого устройства. Пароль восстанавливается по почте.",
+
   err_generic:"Что-то пошло не так. Попробуйте ещё раз."
 },
 en: {
@@ -130,7 +145,7 @@ en: {
   week:"Week", trades_of_week:"Trades of the week",
   no_trades_week:"No trades this week", no_trades_day:"No trades on this day",
   trades_c:"Trades", result:"Result", winrate:"Winrate",
-  lists_models:"Lists & models", columns:"Columns", add_trade:"+ Trade",
+  lists_models:"Customization", columns:"Columns", add_trade:"+ Trade",
 
   col_asset:"Asset", col_market:"Market", col_posType:"Position type", col_model:"Entry model",
   col_timeframe:"Timeframe", col_time:"Time", col_direction:"Direction", col_size:"Position size",
@@ -155,7 +170,7 @@ en: {
   tab_timeframe:"Timeframes", tab_models:"Entry models",
   list_empty:"The list is empty.", new_value:"New value", value_exists:"This value already exists",
   lists_note:"Realtime and Backtest lists are independent: changes here don't affect the other section.",
-  lists_title:"Lists & models",
+  lists_title:"Customization",
   add_model:"+ Add model", described:"described",
   del_model_q:"Delete this model? Existing trades keep its name as text.",
   new_model:"New model", edit_model:"Edit model", model_name:"Model name",
@@ -165,7 +180,7 @@ en: {
   model_tfs:"Timeframes", model_tfs_ph:"e.g. context 4h, entry 15m",
   examples_photos:"Examples (photos)", need_model_name:"Enter a model name", model_saved:"Model saved",
   model_not_found:"Model not found in the list",
-  no_model_desc:"This model has no description yet. Add one via “Lists & models”.",
+  no_model_desc:"This model has no description yet. Add one via “Customization”.",
   describe:"Describe", description:"Description", examples:"Examples",
 
   sessions:"Sessions", new_session:"New session", new_bt_session:"New backtest session",
@@ -225,6 +240,21 @@ en: {
   foot_bingx:"−25% BingX fee discount",
   foot_note_local:"Journal data is stored locally in your browser",
   foot_note_cloud:"Data is synced with your account",
+  guide:"Site guide",
+  tour_skip:"Skip", tour_next:"Next", tour_back:"Back", tour_done:"Got it!",
+  tour1_t:"Three sections",
+  tour1_b:"Realtime Journal — trades by weeks and days. Backtest — model testing sessions on history. Statistics — metrics and the equity curve.",
+  tour2_t:"Journal navigation",
+  tour2_b:"Pick a year and month, switch between the Weeks and Calendar views. In the calendar each day is tinted by its result; click a day to open its trades.",
+  tour3_t:"Recording a trade",
+  tour3_b:"An interactive form: parameters are picked with one-click chips, LONG/SHORT with big buttons, risk/reward is calculated automatically, and you can attach chart photos.",
+  tour4_t:"Customization",
+  tour4_b:"Your own markets, timeframes and entry models — with descriptions, risk management and photo examples. Next to it, Columns: show only the fields you need.",
+  tour5_t:"Backups",
+  tour5_b:"The Data menu: Excel export plus full JSON export and import. Demo data helps you look around — it's easy to remove.",
+  tour6_t:"Account & cloud",
+  tour6_b:"Sign in with email and password — the journal syncs to the cloud and opens on any device. Passwords are recovered by email.",
+
   err_generic:"Something went wrong. Please try again."
 }
 };

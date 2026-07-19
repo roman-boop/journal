@@ -99,8 +99,10 @@ const Journal = (() => {
         ${e && e.has ? `<span class="d-res ${e.sum > 0 ? "pos" : e.sum < 0 ? "neg" : ""}">${fmtPct(e.sum, 1)}</span>` : ""}
       </button>`;
     }
-    return `<div class="cal-dows">${t("dowRow").map(x => `<span>${x}</span>`).join("")}</div>
-            <div class="cal-grid">${cells}</div>`;
+    return `<div class="cal-block">
+              <div class="cal-dows">${t("dowRow").map(x => `<span>${x}</span>`).join("")}</div>
+              <div class="cal-grid">${cells}</div>
+            </div>`;
   }
 
   function summaryHtml(rows, emptyText){

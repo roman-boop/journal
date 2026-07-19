@@ -109,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.target.value = "";
   });
   $("#btnDemo").addEventListener("click", () => { closeMenu(); seedDemo(); });
+  $("#btnGuide").addEventListener("click", () => { closeMenu(); Tour.start(); });
   $("#btnWipe").addEventListener("click", () => { closeMenu(); wipeAll(); });
 
   /* облако */
@@ -118,4 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* страницы */
   Journal.init();
   Backtest.init();
+
+  /* гайд при первом заходе */
+  if(!localStorage.getItem("mdt.tour.done")) setTimeout(() => Tour.start(), 800);
 });
