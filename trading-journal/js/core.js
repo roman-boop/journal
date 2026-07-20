@@ -729,13 +729,19 @@ function tradesTableHtml(scope, rows, columns, { dateCol=false } = {}){
 }
 
 function bindTableActions(container, scope, { onEdit, onDelete, onGallery }){
-  $$("[data-edit]", container).forEach(b => b.addEventListener("click", () => onEdit(b.dataset.edit)));
-  $$("[data-del]", container).forEach(b => b.addEventListener("click", () => {
+  $$("[data-edit]", container).forEach(b => b.addEventListener("click", e => { e.stopPropagation(); onEdit(b.dataset.edit); }));
+  $$("[data-del]", container).forEach(b => b.addEventListener("click", e => {
+    e.stopPropagation();
     if(confirm(t("del_trade_q"))) onDelete(b.dataset.del);
   }));
-  $$("[data-gallery]", container).forEach(b => b.addEventListener("click", () => onGallery && onGallery(b.dataset.gallery)));
+  $$("[data-gallery]", container).forEach(b => b.addEventListener("click", e => { e.stopPropagation(); onGallery && onGallery(b.dataset.gallery); }));
   $$("[data-modelcard]", container).forEach(el =>
-    el.addEventListener("click", () => openModelCard(scope, el.dataset.modelcard)));
+    el.addEventListener("click", e => { e.stopPropagation(); openModelCard(scope, el.dataset.modelcard); }));
+  /* клик по строке = редактирование (работает и на сенсорных без hover) */
+  $$("tbody tr[data-id]", container).forEach(tr => tr.addEventListener("click", e => {
+    if(e.target.closest("button, a, [data-modelcard], input, select, textarea")) return;
+    onEdit(tr.dataset.id);
+  }));
 }
 
 /* ============================================================

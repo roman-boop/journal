@@ -218,9 +218,17 @@ const Journal = (() => {
     </div>`;
 
     openModal(modalShell(existing ? t("edit_trade") : t("new_trade"), body,
-      `<button class="btn btn-ghost" id="tCancel">${t("cancel")}</button>
+      `${existing ? `<button class="btn btn-ghost btn-danger" id="tDelete" style="margin-right:auto">${t("del")}</button>` : ""}
+       <button class="btn btn-ghost" id="tCancel">${t("cancel")}</button>
        <button class="btn btn-primary" id="tSave">${existing ? t("save") : t("add")}</button>`),
       { wide:true, onMount(ov){
+        const delBtn = $("#tDelete", ov);
+        if(delBtn) delBtn.addEventListener("click", () => {
+          if(!confirm(t("del_trade_q"))) return;
+          DATA.trades = DATA.trades.filter(x => x.id !== existing.id);
+          saveData(); closeModal(); render();
+          toast(t("trade_deleted"));
+        });
         bindTradeFormUI(ov);
         renderPhotoGrid($("#tPhotoGrid", ov), photos);
         $$("[data-qd]", ov).forEach(b => b.addEventListener("click", () => {
@@ -260,5 +268,10 @@ const Journal = (() => {
     render();
   }
 
-  return { init, render };
+  function setView(v){
+    state.view = v;
+    render();
+  }
+
+  return { init, render, setView, getView: () => state.view };
 })();

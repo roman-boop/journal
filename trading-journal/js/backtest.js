@@ -190,9 +190,17 @@ const Backtest = (() => {
     </div>`;
 
     openModal(modalShell(existing ? t("edit_trade") : `${t("trade_of")} · ${esc(s.asset)}`, body,
-      `<button class="btn btn-ghost" id="btCancel">${t("cancel")}</button>
+      `${existing ? `<button class="btn btn-ghost btn-danger" id="btDelete" style="margin-right:auto">${t("del")}</button>` : ""}
+       <button class="btn btn-ghost" id="btCancel">${t("cancel")}</button>
        <button class="btn btn-primary" id="btSave">${existing ? t("save") : t("add")}</button>`),
       { wide:true, onMount(ov){
+        const delBtn = $("#btDelete", ov);
+        if(delBtn) delBtn.addEventListener("click", () => {
+          if(!confirm(t("del_trade_q"))) return;
+          s.trades = s.trades.filter(x => x.id !== existing.id);
+          saveData(); closeModal(); render();
+          toast(t("trade_deleted"));
+        });
         bindTradeFormUI(ov);
         renderPhotoGrid($("#tPhotoGrid", ov), photos);
         $("#btCancel", ov).addEventListener("click", closeModal);

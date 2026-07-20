@@ -17,6 +17,9 @@ function showPage(page){
   if(page === "stats"){
     if(!statsInited){ initStats(); statsInited = true; }
     renderStats();
+    if(!localStorage.getItem("mdt.tour.stats.done") && localStorage.getItem("mdt.tour.done") && !Tour.active()){
+      setTimeout(() => { if(currentPage === "stats") Tour.startStats(); }, 500);
+    }
   }
   if(page === "backtest") Backtest.render();
   if(page === "journal") Journal.render();

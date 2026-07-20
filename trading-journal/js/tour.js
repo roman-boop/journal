@@ -1,26 +1,56 @@
 /* ============================================================
-   tour.js — гайд по сайту при первом заходе
-   Подсветка элемента + карточка со стрелкой + точки прогресса
+   tour.js — гайды по сайту
+   Основной тур (первый заход) + гайд раздела Statistics
    ============================================================ */
 "use strict";
 
 const Tour = (() => {
-  const steps = [
-    { sel: ".tabs",      tk:"tour1_t", bk:"tour1_b" },
-    { sel: "#jCrumbs",   tk:"tour2_t", bk:"tour2_b" },
-    { sel: "#jBtnAdd",   tk:"tour3_t", bk:"tour3_b" },
-    { sel: "#jBtnLists", tk:"tour4_t", bk:"tour4_b" },
-    { sel: "#dataMenu",  tk:"tour5_t", bk:"tour5_b" },
-    { sel: "#authArea",  tk:"tour6_t", bk:"tour6_b" }
+  const mainSteps = () => [
+    { sel:".tabs",      tk:"tour1_t",    bk:"tour1_b" },
+    { sel:"#jCrumbs",   tk:"tour2_t",    bk:"tour2_b" },
+    { sel:"#jWeeks",    tk:"tour_cal_t", bk:"tour_cal_b", pre(){ Journal.setView("day"); } },
+    { sel:"#jBtnAdd",   tk:"tour3_t",    bk:"tour3_b" },
+    { sel:"#jBtnLists", tk:"tour4_t",    bk:"tour4_b" },
+    { sel:"#jBtnCols",  tk:"tour_cols_t",bk:"tour_cols_b" },
+    { sel:"#dataMenu",  tk:"tour5_t",    bk:"tour5_b" },
+    { sel:"#authArea",  tk:"tour6_t",    bk:"tour6_b" }
   ];
-  let i = 0, ov = null;
 
+  const statsSteps = () => [
+    { sel:"#stScope",      tk:"tst1_t", bk:"tst1_b" },
+    { sel:"#stControls",   tk:"tst2_t", bk:"tst2_b" },
+    { sel:"#stMetrics",    tk:"tst3_t", bk:"tst3_b" },
+    { sel:".chart-card",   tk:"tst4_t", bk:"tst4_b" }
+  ];
+
+  let steps = [], i = 0, ov = null, onEnd = null;
+
+  const active = () => !!ov;
+
+  /* -------- запуск основного тура -------- */
   function start(){
-    if(ov) return;
+    if(active()) return;
     localStorage.setItem("mdt.tour.done", "1");
     if(typeof currentPage !== "undefined" && currentPage !== "journal") showPage("journal");
     closeModal();
-    i = 0;
+    const prevView = Journal.getView();
+    begin(mainSteps(), () => {
+      if(Journal.getView() !== prevView) Journal.setView(prevView);
+    });
+  }
+
+  /* -------- запуск гайда статистики -------- */
+  function startStats(){
+    if(active()) return;
+    localStorage.setItem("mdt.tour.stats.done", "1");
+    if(typeof currentPage !== "undefined" && currentPage !== "stats") showPage("stats");
+    closeModal();
+    begin(statsSteps(), null);
+  }
+
+  /* -------- общий механизм -------- */
+  function begin(list, cleanup){
+    steps = list; onEnd = cleanup; i = 0;
     ov = document.createElement("div");
     ov.className = "tour-ov";
     ov.innerHTML = `<div class="tour-hl"></div><div class="tour-tip"></div>`;
@@ -46,6 +76,7 @@ const Tour = (() => {
     setTimeout(() => node.remove(), 220);
     document.removeEventListener("keydown", kb);
     window.removeEventListener("resize", onResize);
+    if(onEnd){ onEnd(); onEnd = null; }
   }
 
   function next(){
@@ -55,10 +86,27 @@ const Tour = (() => {
 
   function show(scroll = true){
     const st = steps[i];
+    if(st.pre) st.pre();
     const el = document.querySelector(st.sel);
     if(!el || !el.offsetParent){ next(); return; }
-    if(scroll) el.scrollIntoView({ block:"center" });
 
+    /* прокручиваем мгновенно (плавная прокрутка страницы ломает замер позиции)
+       и только если элемент не виден целиком */
+    if(scroll){
+      const r0 = el.getBoundingClientRect();
+      if(r0.top < 74 || r0.bottom > window.innerHeight - 96){
+        const root = document.documentElement;
+        const prev = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
+        el.scrollIntoView({ block:"center" });
+        root.style.scrollBehavior = prev;
+      }
+    }
+    requestAnimationFrame(() => place(el, st));
+  }
+
+  function place(el, st){
+    if(!ov) return;
     const r = el.getBoundingClientRect();
     const pad = 7;
     const hl = ov.querySelector(".tour-hl");
@@ -100,5 +148,5 @@ const Tour = (() => {
     if(prev) prev.addEventListener("click", () => { i--; show(); });
   }
 
-  return { start };
+  return { start, startStats, active };
 })();

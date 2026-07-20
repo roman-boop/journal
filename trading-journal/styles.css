@@ -266,8 +266,17 @@ td.td-date{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);whit
 .model-link{border-bottom:1px dashed var(--line-strong);cursor:pointer;transition:color var(--t-fast),border-color var(--t-fast)}
 .model-link:hover{color:var(--accent);border-color:var(--accent)}
 
+table.j tbody tr[data-id]{cursor:pointer}
+.btn-danger{color:var(--loss)}
+.btn-danger:hover{background:var(--loss-soft);color:var(--loss)}
 .row-actions{display:flex;gap:2px;justify-content:flex-end;opacity:0;transition:opacity var(--t-fast)}
-table.j tbody tr:hover .row-actions{opacity:1}
+table.j tbody tr:hover .row-actions,
+table.j tbody tr:focus-within .row-actions{opacity:1}
+/* сенсорные устройства: hover нет — кнопки видны всегда */
+@media (hover: none), (pointer: coarse){
+  .row-actions{opacity:.9}
+  .icon-btn{width:34px;height:34px}
+}
 .icon-btn{
   width:29px;height:29px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
   color:var(--muted);transition:background var(--t-fast),color var(--t-fast);
