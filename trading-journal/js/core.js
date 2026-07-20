@@ -680,7 +680,7 @@ function cellHtml(scope, col, values){
       const st = scopeSettings(scope);
       const m = st.models.find(x => x.name === v);
       const cls = m && m.described ? " model-link" : "";
-      return `<td><span class="${cls.trim()}" ${m && m.described ? `data-modelcard="${esc(v)}"` : ""}>${esc(v)}</span></td>`;
+      return `<td class="td-model"><span class="m-ell${cls}" title="${esc(v)}" ${m && m.described ? `data-modelcard="${esc(v)}"` : ""}>${esc(v)}</span></td>`;
     }
     case "select": {
       if(!v) return `<td class="td-note">—</td>`;

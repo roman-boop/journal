@@ -9,6 +9,6 @@
 "use strict";
 
 const CONFIG = {
-  SUPABASE_URL: "https://kqduuszfolyiehzgxwri.supabase.co",       // например: "https://abcdefgh.supabase.co"
-  SUPABASE_ANON_KEY: "sb_publishable_v9-N3dR1aLX4EUzfSkHF7A_ZXPA_U3M"   // длинный ключ anon public
+  SUPABASE_URL: "",       // например: "https://abcdefgh.supabase.co"
+  SUPABASE_ANON_KEY: ""   // длинный ключ anon public
 };
