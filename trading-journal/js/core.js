@@ -694,7 +694,7 @@ function cellHtml(scope, col, values){
     case "time":     return `<td class="num">${esc(v || "")}</td>`;
     case "datetime": return `<td class="td-date">${fmtDT(v)}</td>`;
     case "textarea": return `<td class="td-note" title="${esc(v || "")}">${esc(v || "") || "—"}</td>`;
-    default:         return `<td>${esc(v || "") || "—"}</td>`;
+    default:         return `<td class="td-text" title="${esc(v || "")}">${esc(v || "") || "—"}</td>`;
   }
 }
 
