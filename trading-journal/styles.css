@@ -618,6 +618,11 @@ table.j tbody tr:focus-within .row-actions{opacity:1}
 .cal-day .d-res.pos{color:var(--gain)}
 .cal-day .d-res.neg{color:var(--loss)}
 
+.ph-hint{
+  font:400 11px var(--font-body);letter-spacing:0;text-transform:none;
+  color:var(--muted);opacity:.8;margin-left:6px;
+}
+
 /* ---------- фото сделки в таблице ---------- */
 .row-cell{display:flex;justify-content:flex-end;align-items:center;gap:2px}
 .photo-ind{width:auto;padding:0 8px;gap:4px;color:var(--muted)}
