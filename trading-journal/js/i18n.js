@@ -32,6 +32,7 @@ ru: {
   yesterday:"Вчера", photos:"Фото", photo_add:"фото", need_date:"Укажите дату сделки",
   trade_added:"Сделка добавлена", trade_updated:"Сделка обновлена", trade_deleted:"Сделка удалена",
   del_trade_q:"Удалить сделку?", trade_photos:"Фото сделки", photo_fail:"Не удалось загрузить фото",
+  photos_hint:"Ctrl+V — вставить скрин из буфера", photo_pasted:"Фото вставлено из буфера",
   rr:"Риск / прибыль", rr_hint:"по полям вход · стоп · тейк", no_value:"—",
 
   cols_title:"Столбцы журнала", own_cols:"Свои столбцы", no_own_cols:"Пока нет своих столбцов.",
@@ -170,6 +171,7 @@ en: {
   yesterday:"Yesterday", photos:"Photos", photo_add:"photo", need_date:"Set the trade date",
   trade_added:"Trade added", trade_updated:"Trade updated", trade_deleted:"Trade deleted",
   del_trade_q:"Delete this trade?", trade_photos:"Trade photos", photo_fail:"Could not load the photo",
+  photos_hint:"Ctrl+V — paste a screenshot", photo_pasted:"Photo pasted from clipboard",
   rr:"Risk / reward", rr_hint:"from entry · stop · take", no_value:"—",
 
   cols_title:"Journal columns", own_cols:"Custom columns", no_own_cols:"No custom columns yet.",

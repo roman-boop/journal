@@ -493,10 +493,14 @@ function openLightbox(src){
 
 /* ---------- фото сделки ---------- */
 function photoSectionHtml(){
-  return `<div class="f-field f-wide"><label>${t("photos")}</label><div class="photo-grid" id="tPhotoGrid"></div></div>`;
+  return `<div class="f-field f-wide">
+    <label>${t("photos")} <span class="ph-hint">${t("photos_hint")}</span></label>
+    <div class="photo-grid" id="tPhotoGrid"></div>
+  </div>`;
 }
 
 function renderPhotoGrid(grid, photos){
+  grid._photos = photos;
   grid.innerHTML = photos.map((s, i) => `
     <div class="photo-thumb" data-view="${i}"><img src="${s}" alt=""><span class="ph-x" data-ph="${i}" title="${esc(t("del"))}">✕</span></div>`).join("")
     + `<label class="photo-add"><span>+</span>${t("photo_add")}<input type="file" accept="image/*" multiple hidden></label>`;
@@ -516,6 +520,29 @@ function renderPhotoGrid(grid, photos){
   grid.querySelectorAll(".photo-thumb").forEach(th =>
     th.addEventListener("click", () => openLightbox(photos[+th.dataset.view])));
 }
+
+/* вставка фото из буфера обмена (Ctrl+V) в открытую форму */
+document.addEventListener("paste", async e => {
+  const ov = $("#modalRoot .overlay:not(.lb)");
+  if(!ov) return;
+  const grid = ov.querySelector(".photo-grid");
+  if(!grid || !grid._photos) return;
+  const items = [...((e.clipboardData && e.clipboardData.items) || [])]
+    .filter(it => it.type && it.type.startsWith("image/"));
+  if(!items.length) return;
+  e.preventDefault();
+  let added = 0;
+  for(const it of items){
+    const f = it.getAsFile();
+    if(!f) continue;
+    try{ grid._photos.push(await compressImage(f)); added++; }
+    catch(err){ toast(t("photo_fail"), true); }
+  }
+  if(added){
+    renderPhotoGrid(grid, grid._photos);
+    toast(t("photo_pasted"));
+  }
+});
 
 function openTradeGallery(photos){
   if(!photos || !photos.length) return;
