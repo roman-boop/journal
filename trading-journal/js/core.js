@@ -78,23 +78,108 @@ function validData(d){
     && Array.isArray(d.trades) && Array.isArray(d.sessions);
 }
 
-let DATA = loadData();
+function defaultStore(){
+  return { version:2, activeJournalId:"journal-1", journals:[
+    { ...defaultData(), id:"journal-1", name:"Журнал 1" }
+  ] };
+}
+
+function normalizeStore(value){
+  if(validData(value)){
+    return { version:2, activeJournalId:"journal-1", journals:[
+      { ...value, id:"journal-1", name:"Журнал 1" }
+    ] };
+  }
+  if(!value || !Array.isArray(value.journals) || !value.journals.length) return null;
+  const ids = new Set();
+  const journals = value.journals.filter(validData).map((journal, index) => {
+    let id = typeof journal.id === "string" && journal.id ? journal.id : uid();
+    if(ids.has(id)) id = uid();
+    ids.add(id);
+    return { ...journal, id, name:String(journal.name || `Журнал ${index + 1}`).trim().slice(0, 40) || `Журнал ${index + 1}` };
+  });
+  if(!journals.length) return null;
+  const activeJournalId = ids.has(value.activeJournalId) ? value.activeJournalId : journals[0].id;
+  return { version:2, activeJournalId, journals };
+}
+
+let STORE = loadData();
+let DATA = STORE.journals.find(j => j.id === STORE.activeJournalId);
 
 function loadData(){
   try{
     const raw = localStorage.getItem(LS_KEY);
-    if(!raw) return defaultData();
-    const d = JSON.parse(raw);
-    return validData(d) ? d : defaultData();
-  }catch(e){ return defaultData(); }
+    return raw ? (normalizeStore(JSON.parse(raw)) || defaultStore()) : defaultStore();
+  }catch(e){ return defaultStore(); }
+}
+
+function replaceStore(value){
+  const next = normalizeStore(value);
+  if(!next) return false;
+  STORE = next;
+  DATA = STORE.journals.find(j => j.id === STORE.activeJournalId);
+  return true;
+}
+
+function selectJournal(id){
+  const journal = STORE.journals.find(j => j.id === id);
+  if(!journal || journal === DATA) return;
+  STORE.activeJournalId = id;
+  DATA = journal;
+  saveData();
+  if(typeof Backtest !== "undefined") Backtest.resetView();
+  if(typeof StatsState !== "undefined") StatsState.sessionId = "all";
+  if(typeof closeModal === "function") closeModal();
+  if(typeof rerenderAll === "function") rerenderAll();
+}
+
+function addJournal(){
+  const used = new Set(STORE.journals.map(j => j.name.toLocaleLowerCase()));
+  let number = 1;
+  while(used.has(`журнал ${number}`)) number++;
+  const journal = { ...defaultData(), id:uid(), name:`Журнал ${number}` };
+  STORE.journals.push(journal);
+  STORE.activeJournalId = journal.id;
+  DATA = journal;
+  saveData();
+  if(typeof Backtest !== "undefined") Backtest.resetView();
+  if(typeof StatsState !== "undefined") StatsState.sessionId = "all";
+  rerenderAll();
+  return journal;
+}
+
+function renameJournal(id, name){
+  const journal = STORE.journals.find(j => j.id === id);
+  const clean = String(name || "").trim().slice(0, 40);
+  if(!journal || !clean) return false;
+  journal.name = clean;
+  saveData();
+  if(typeof renderJournalSwitcher === "function") renderJournalSwitcher();
+  return true;
+}
+
+function deleteJournal(id){
+  if(STORE.journals.length < 2) return false;
+  const index = STORE.journals.findIndex(j => j.id === id);
+  if(index < 0) return false;
+  STORE.journals.splice(index, 1);
+  if(STORE.activeJournalId === id){
+    DATA = STORE.journals[Math.max(0, index - 1)];
+    STORE.activeJournalId = DATA.id;
+  }
+  saveData();
+  if(typeof Backtest !== "undefined") Backtest.resetView();
+  rerenderAll();
+  return true;
 }
 
 function saveData(){
   try{
-    localStorage.setItem(LS_KEY, JSON.stringify(DATA));
+    localStorage.setItem(LS_KEY, JSON.stringify(STORE));
   }catch(e){
     toast(t("storage_full"), true);
   }
+  if(typeof renderJournalSwitcher === "function" && document.getElementById("journalRail")) renderJournalSwitcher();
   if(typeof Cloud !== "undefined") Cloud.schedulePush();
 }
 
@@ -775,7 +860,7 @@ function bindTableActions(container, scope, { onEdit, onDelete, onGallery }){
    Экспорт / импорт / Excel / демо
    ============================================================ */
 function exportJSON(){
-  const blob = new Blob([JSON.stringify(DATA, null, 2)], { type:"application/json" });
+  const blob = new Blob([JSON.stringify(STORE, null, 2)], { type:"application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "maniacdt-journal-" + todayISO() + ".json";
@@ -789,8 +874,7 @@ function importJSON(file){
   reader.onload = () => {
     try{
       const d = JSON.parse(reader.result);
-      if(!validData(d)) throw new Error("bad format");
-      DATA = d;
+      if(!replaceStore(d)) throw new Error("bad format");
       saveData();
       rerenderAll();
       toast(t("imported"));
@@ -806,41 +890,45 @@ function exportExcel(){
   const numeric = ty => ty === "number" || ty === "result";
   const cellVal = (c, v) => numeric(c.type) ? (parseNum(v) ?? "") : (v ?? "");
 
+  STORE.journals.forEach((journal, index) => {
+  const sheetName = kind => `${index + 1} ${journal.name.replace(/[\\\/?*\[\]:]/g, "").slice(0, 15)} ${kind}`.slice(0, 31);
   /* Realtime */
-  const rtCols = [...COLUMN_DEFS.realtime, ...DATA.settings.realtime.customCols];
-  const rtRows = [...DATA.trades]
+  const rtCols = [...COLUMN_DEFS.realtime, ...journal.settings.realtime.customCols];
+  const rtRows = [...journal.trades]
     .sort((a, b) => (a.date + (a.values.time || "")) < (b.date + (b.values.time || "")) ? -1 : 1)
     .map(x => {
-      const row = { [t("date")]: x.date };
+      const row = { [t("journal")]: journal.name, [t("date")]: x.date };
       rtCols.forEach(c => { row[colLabel(c)] = cellVal(c, x.values[c.id]); });
       return row;
     });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rtRows.length ? rtRows : [{}]), "Realtime");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rtRows.length ? rtRows : [{}]), sheetName("Realtime"));
 
   /* Backtest */
-  const btCols = [...COLUMN_DEFS.backtest, ...DATA.settings.backtest.customCols];
+  const btCols = [...COLUMN_DEFS.backtest, ...journal.settings.backtest.customCols];
   const btRows = [];
-  DATA.sessions.forEach(s => {
+  journal.sessions.forEach(s => {
     [...s.trades]
       .sort((a, b) => (a.values.entryTime || a.createdAt || "") < (b.values.entryTime || b.createdAt || "") ? -1 : 1)
       .forEach(x => {
-        const row = { [t("session")]: s.asset };
+        const row = { [t("journal")]: journal.name, [t("session")]: s.asset };
         btCols.forEach(c => { row[colLabel(c)] = cellVal(c, x.values[c.id]); });
         btRows.push(row);
       });
   });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(btRows.length ? btRows : [{}]), "Backtest");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(btRows.length ? btRows : [{}]), sheetName("Backtest"));
 
   /* Models */
   const modelRows = [];
-  ["realtime","backtest"].forEach(scope => DATA.settings[scope].models.forEach(m => modelRows.push({
+  ["realtime","backtest"].forEach(scope => journal.settings[scope].models.forEach(m => modelRows.push({
+    [t("journal")]: journal.name,
     Scope: scope,
     [t("model_name")]: m.name,
     [t("description")]: m.desc || "",
     [t("risk_mgmt")]: m.risk || "",
     [t("model_tfs")]: m.tfs || ""
   })));
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(modelRows.length ? modelRows : [{}]), "Models");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(modelRows.length ? modelRows : [{}]), sheetName("Models"));
+  });
 
   XLSX.writeFile(wb, "maniacdt-journal-" + todayISO() + ".xlsx");
   toast(t("excel_ready"));
@@ -848,7 +936,7 @@ function exportExcel(){
 
 function wipeAll(){
   if(!confirm(t("wipe_q"))) return;
-  DATA = defaultData();
+  replaceStore(defaultStore());
   saveData();
   rerenderAll();
   toast(t("wiped"));

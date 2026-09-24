@@ -17,7 +17,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -25,17 +25,15 @@
 <header class="top">
   <div class="top-inner">
     <a class="brand" href="#" id="brandLink">
-      <svg class="brand-spark" viewBox="0 0 64 24" aria-hidden="true">
-        <polyline points="1,18 9,14 16,16 24,9 31,12 39,6 47,10 55,4 63,7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
       <span class="brand-name">MANIACDT</span>
       <span class="brand-sub">trading journal</span>
     </a>
 
     <nav class="tabs" aria-label="Sections">
-      <button class="tab is-active" data-page="journal">Realtime Journal</button>
-      <button class="tab" data-page="backtest">Backtest</button>
-      <button class="tab" data-page="stats">Statistics</button>
+      <button class="tab is-active" data-page="journal" data-i18n="nav_realtime">Журнал сделок</button>
+      <button class="tab" data-page="backtest" data-i18n="nav_backtest">Бектест</button>
+      <button class="tab" data-page="stats" data-i18n="nav_stats">Статистика</button>
     </nav>
 
     <div class="head-tools">
@@ -62,10 +60,21 @@
 
 <main>
 
+  <section class="workspace" aria-label="Journals">
+    <div class="workspace-intro">
+      <div>
+        <div class="workspace-kicker" data-i18n="workspace">Рабочее пространство</div>
+        <h1 id="workspaceTitle"></h1>
+      </div>
+      <div class="workspace-meta" id="workspaceMeta"></div>
+    </div>
+    <div class="journal-rail" id="journalRail" role="group" aria-label="Journals"></div>
+  </section>
+
   <!-- ======================= REALTIME JOURNAL ======================= -->
   <section class="page is-active" id="page-journal">
     <div class="page-head">
-      <div class="eyebrow"><span class="dot dot-live"></span>Realtime journal</div>
+      <div class="eyebrow"><span class="dot dot-live"></span><span data-i18n="nav_realtime">Журнал сделок</span></div>
       <div class="crumbs" id="jCrumbs"></div>
     </div>
 
@@ -88,7 +97,7 @@
   <!-- ======================= BACKTEST ======================= -->
   <section class="page" id="page-backtest">
     <div class="page-head">
-      <div class="eyebrow"><span class="dot dot-bt"></span>Backtest</div>
+      <div class="eyebrow"><span class="dot dot-bt"></span><span data-i18n="nav_backtest">Бектест</span></div>
     </div>
     <div id="btRoot"></div>
   </section>
@@ -96,7 +105,7 @@
   <!-- ======================= STATISTICS ======================= -->
   <section class="page" id="page-stats">
     <div class="page-head">
-      <div class="eyebrow"><span class="dot dot-st"></span>Statistics</div>
+      <div class="eyebrow"><span class="dot dot-st"></span><span data-i18n="nav_stats">Статистика</span></div>
       <div class="segmented" id="stScope">
         <button class="seg is-active" data-scope="realtime">Realtime</button>
         <button class="seg" data-scope="backtest">Backtest</button>

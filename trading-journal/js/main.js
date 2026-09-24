@@ -6,13 +6,21 @@
 let currentPage = "journal";
 let statsInited = false;
 
-function showPage(page){
+function journalCount(n, kind){
+  if(LANG !== "ru") return `${n} ${kind}${n === 1 ? "" : "s"}`;
+  const forms = kind === "trade" ? ["сделка", "сделки", "сделок"] : ["сессия", "сессии", "сессий"];
+  const i = n % 100 >= 11 && n % 100 <= 14 ? 2 : n % 10 === 1 ? 0 : n % 10 >= 2 && n % 10 <= 4 ? 1 : 2;
+  return `${n} ${forms[i]}`;
+}
+
+function showPage(page, resetScroll=false){
   currentPage = page;
   $$(".tab").forEach(x => x.classList.toggle("is-active", x.dataset.page === page));
   $$(".page").forEach(p => p.classList.remove("is-active"));
   const el = $("#page-" + page);
   void el.offsetWidth;
   el.classList.add("is-active");
+  if(resetScroll) window.scrollTo(0, 0);
 
   if(page === "stats"){
     if(!statsInited){ initStats(); statsInited = true; }
@@ -26,11 +34,61 @@ function showPage(page){
 }
 
 function rerenderAll(){
+  renderJournalSwitcher();
   Journal.render();
   Backtest.render();
   if(statsInited) renderStats();
   showPage(currentPage);
   applyStaticI18n();
+}
+
+function renderJournalSwitcher(){
+  const rail = $("#journalRail");
+  if(!rail) return;
+  $(".workspace").setAttribute("aria-label", t("journals"));
+  rail.setAttribute("aria-label", t("journals"));
+  $("#workspaceTitle").textContent = DATA.name;
+  $("#workspaceMeta").innerHTML = `<span>${journalCount(DATA.trades.length, "trade")}</span><span class="meta-divider"></span><span>${journalCount(DATA.sessions.length, "session")}</span>`;
+  rail.innerHTML = STORE.journals.map((journal, index) => `
+    <div class="journal-item${journal.id === DATA.id ? " is-active" : ""}">
+      <button class="journal-select" type="button" data-journal="${esc(journal.id)}" ${journal.id === DATA.id ? 'aria-current="true"' : ""} title="${esc(journal.name)}">
+        <span class="journal-index">${String(index + 1).padStart(2, "0")}</span><span class="journal-name">${esc(journal.name)}</span>
+      </button>
+      <button class="journal-edit" type="button" data-edit-journal="${esc(journal.id)}" aria-label="${esc(t("edit_journal"))}: ${esc(journal.name)}" title="${esc(t("edit_journal"))}">•••</button>
+    </div>`).join("") + `<button class="journal-add" type="button" id="addJournal" aria-label="${esc(t("add_journal"))}" title="${esc(t("add_journal"))}"><span>+</span></button>`;
+  $$("[data-journal]", rail).forEach(button => button.addEventListener("click", () => selectJournal(button.dataset.journal)));
+  $$("[data-edit-journal]", rail).forEach(button => button.addEventListener("click", () => openJournalEditor(button.dataset.editJournal)));
+  $("#addJournal").addEventListener("click", () => {
+    const journal = addJournal();
+    toast(t("journal_added"));
+    openJournalEditor(journal.id);
+  });
+}
+
+function openJournalEditor(id){
+  const journal = STORE.journals.find(j => j.id === id);
+  if(!journal) return;
+  const canDelete = STORE.journals.length > 1;
+  openModal(modalShell(t("edit_journal"),
+    `<div class="f-field"><label for="journalName">${t("journal_name")}</label><input id="journalName" type="text" maxlength="40" value="${esc(journal.name)}" autocomplete="off"></div>`,
+    `${canDelete ? `<button class="btn btn-danger-ghost journal-delete" id="journalDelete">${t("delete_journal")}</button>` : ""}
+     <button class="btn btn-ghost" id="journalCancel">${t("cancel")}</button>
+     <button class="btn btn-primary" id="journalSave">${t("save")}</button>`),
+    { onMount(overlay){
+      const input = $("#journalName", overlay);
+      input.focus(); input.select();
+      const save = () => {
+        if(!renameJournal(id, input.value)){ toast(t("journal_name_required"), true); input.focus(); return; }
+        closeModal(); toast(t("journal_saved"));
+      };
+      $("#journalSave", overlay).addEventListener("click", save);
+      input.addEventListener("keydown", event => { if(event.key === "Enter") save(); });
+      $("#journalCancel", overlay).addEventListener("click", closeModal);
+      if(canDelete) $("#journalDelete", overlay).addEventListener("click", () => {
+        if(!confirm(t("delete_journal_q"))) return;
+        closeModal(); deleteJournal(id);
+      });
+    }});
 }
 
 /* ---------- тема ---------- */
@@ -89,8 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
   applyStaticI18n();
 
   /* вкладки */
-  $$(".tab").forEach(x => x.addEventListener("click", () => showPage(x.dataset.page)));
-  $("#brandLink").addEventListener("click", e => { e.preventDefault(); showPage("journal"); });
+  $$(".tab").forEach(x => x.addEventListener("click", () => showPage(x.dataset.page, true)));
+  $("#brandLink").addEventListener("click", e => { e.preventDefault(); showPage("journal", true); });
 
   /* тема и язык */
   $("#themeBtn").addEventListener("click", () =>
@@ -120,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderHeaderControls();
 
   /* страницы */
+  renderJournalSwitcher();
   Journal.init();
   Backtest.init();
 

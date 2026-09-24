@@ -15,6 +15,9 @@ ru: {
   dowRow: ["пн","вт","ср","чт","пт","сб","вс"],
 
   data:"Данные", export_json:"Экспорт JSON", import_json:"Импорт JSON",
+  nav_realtime:"Журнал сделок", nav_backtest:"Бектест", nav_stats:"Статистика",
+  workspace:"Рабочее пространство", journal:"Журнал", journals:"Журналы", journal_trades:"сделок", journal_sessions:"сессий",
+  add_journal:"Добавить журнал", edit_journal:"Настройки журнала", journal_name:"Название журнала", rename_journal:"Переименовать", delete_journal:"Удалить журнал", delete_journal_q:"Удалить этот журнал со всеми сделками и сессиями?", journal_name_required:"Введите название журнала", journal_saved:"Название обновлено", journal_added:"Журнал создан",
   export_excel:"Бекап в Excel", demo:"Демо-данные", wipe:"Очистить всё",
   today:"Сегодня", weeks:"Недели", calendar:"Календарь",
   week:"Неделя", trades_of_week:"Сделки недели",
@@ -154,6 +157,9 @@ en: {
   dowRow: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
 
   data:"Data", export_json:"Export JSON", import_json:"Import JSON",
+  nav_realtime:"Realtime Journal", nav_backtest:"Backtest", nav_stats:"Statistics",
+  workspace:"Workspace", journal:"Journal", journals:"Journals", journal_trades:"trades", journal_sessions:"sessions",
+  add_journal:"Add journal", edit_journal:"Journal settings", journal_name:"Journal name", rename_journal:"Rename", delete_journal:"Delete journal", delete_journal_q:"Delete this journal and all its trades and sessions?", journal_name_required:"Enter a journal name", journal_saved:"Name updated", journal_added:"Journal created",
   export_excel:"Excel backup", demo:"Demo data", wipe:"Clear everything",
   today:"Today", weeks:"Weeks", calendar:"Calendar",
   week:"Week", trades_of_week:"Trades of the week",

@@ -52,19 +52,19 @@ const Cloud = {
         .from("user_data").select("data").eq("user_id", this.user.id).maybeSingle();
       if(error) throw error;
 
-      if(row && validData(row.data)){
-        DATA = row.data;
-        try{ localStorage.setItem(LS_KEY, JSON.stringify(DATA)); }catch(_){}
+      if(row && replaceStore(row.data)){
+        try{ localStorage.setItem(LS_KEY, JSON.stringify(STORE)); }catch(_){}
         rerenderAll();
         this.setStatus("ok");
         toast(t("cloud_loaded"));
       }else{
         /* в облаке пусто: перенести локальные данные, если они есть */
-        const hasLocal = DATA.trades.length || DATA.sessions.length;
+        const hasLocal = STORE.journals.some(j => j.trades.length || j.sessions.length);
         if(!hasLocal || confirm(t("migrate_q"))){
           await this.pushNow();
         }else{
-          DATA = defaultData();
+          replaceStore(defaultStore());
+          saveData();
           rerenderAll();
           await this.pushNow();
         }
@@ -90,7 +90,7 @@ const Cloud = {
     try{
       const { error } = await this.client.from("user_data").upsert({
         user_id: this.user.id,
-        data: DATA,
+        data: STORE,
         updated_at: new Date().toISOString()
       });
       if(error) throw error;

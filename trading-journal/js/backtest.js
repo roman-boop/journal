@@ -264,5 +264,7 @@ const Backtest = (() => {
 
   function init(){ render(); }
 
-  return { init, render };
+  function resetView(){ state.view = "list"; state.sessionId = null; }
+
+  return { init, render, resetView };
 })();
